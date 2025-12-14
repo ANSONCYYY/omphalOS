@@ -1,0 +1,2 @@
+-- Reference schema (SQLite)
+-- Materialized by the reference pipeline.
