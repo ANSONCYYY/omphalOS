@@ -1,96 +1,124 @@
 # omphalOS
 
-omphalOS exists to solve an old problem in analytic work: _The result is rarely sufficient on its own_.
+omphalOS exists for a simple reason: analytic conclusions outlive the circumstances that produced them.
 
-In many environments — particularly within U.S.-governmental analytical work (for which this project was created in May 2024 \[and modernized in December 2025\]) — any output that might inform action must remain legible under scrutiny, traceable to its provenance, and distributable only with appropriate restraint.
+In U.S. governmental analytical environments — the setting for which this system was first built in May 2024, then modernized for open release in December 2025 — an output that may inform action is expected to remain (i) legible under review, (ii) traceable to its provenance, and (iii) transmissible only under deliberate restraint.
 
-This project was written to make that posture routine, to which end the repository includes a reference pipeline and example artifacts.
+The purpose here is practical: **to make that posture routine.**
 
-All example data is synthetic.
+This public release is a sanitized reference implementation, and all example data is synthetic.
 
-## What a run is
+## What the system asserts
 
-A run is a bounded execution that produces two things at once: (1) reader-facing deliverables and (2) a record adequate to explain, reproduce, and verify those deliverables later, when the original context and the original operator are no longer present.
+A run is treated as an evidentiary package: it yields deliverables for a reader and, inseparably, a record adequate to explain what was done, reproduce it when feasible, and detect post-hoc alteration without argument.
 
-A typical run directory contains:
+The claims, then, are intentionally narrow:
 
-- run_manifest.json, which inventories the run’s outputs and records integrity fingerprints
-- exports/, which holds the materials intended for readers (tables, narrative, packet-style records)
-- reports/, which contains structured checks (quality, determinism comparison, publishability scan, dependency inventory)
-- lineage/, which records the run as an append-only sequence of events
-- warehouse/, which contains a local SQLite artifact used by the reference pipeline
+1. Integrity: a completed run directory can be checked against its manifest. If the fingerprints do not match, the package has changed.
+2. Comparability: two runs can be compared at the level of declared outputs, so disagreement can be located rather than narrated.
+3. Controlled distribution: a publishability scan surfaces common disclosure hazards before a package leaves its originating context.
 
-A completed run directory should be verifiable against its manifest, so that post-hoc editing—accidental or deliberate—can be detected without argument.
+No stronger guarantee is implied. Correctness remains a matter of method, inputs, and judgment.
 
-## Why this approach is necessary
+## What a reader can expect from the record
 
-In settings where analyses circulate beyond the originating workspace, the questions that matter are predictable and rarely polite:
+A run produces a directory intended to travel as a unit. The directory is structured so a reviewer can answer, from the artifacts alone, the questions that reliably matter once work leaves its originating workspace:
 
 - What inputs were admitted, and what boundaries were enforced?
-- What rules were applied, and where are those rules written down?
-- Which outputs are final, which are intermediate, and which require human review?
-- What can be shared, with whom, and with what risk of inadvertent disclosure?
-- If two runs disagree, is the disagreement substantive or procedural?
+- What rules governed transformations, and where are those rules stated?
+- Which outputs are intended for consumption, which are intermediate, and which require human review?
+- What may be shared, with whom, and with what risk of inadvertent disclosure?
+- When two executions disagree, is the disagreement substantive or procedural?
 
-omphalOS is designed so these questions can be answered from the artifacts themselves, without appeals to memory or authority.
+If a package cannot answer these questions, it is incomplete work.
 
-## Getting started
+## Minimal use
 
-You may verify the included sample run without installing anything beyond Python:
+Verify the included sample run:
 
+```bash
 python -m omphalos verify --run-dir examples/sample_run
+```
 
-To execute the synthetic reference pipeline, run:
+Execute the synthetic reference pipeline:
 
+```bash
 python -m omphalos run --config config/runs/example_run.yaml
+```
 
-Runs typically materialize under artifacts/runs/. To verify a specific run directory:
+Verify a generated run directory:
 
+```bash
 python -m omphalos verify --run-dir artifacts/runs/<run_id>
+```
 
-If you wish to compare two runs for equivalence at the payload level:
+Compare two runs for payload-level equivalence:
 
+```bash
 python -m omphalos certify --run-a artifacts/runs/<runA> --run-b artifacts/runs/<runB>
+```
 
-## Release bundles and downstream verification
+## Distribution
 
-When a run must be transmitted as a single object, you may build a portable bundle:
+When a run must be transmitted as a single object:
 
+```bash
 python -m omphalos release build --run-dir artifacts/runs/<run_id> --out artifacts/releases/<run_id>.tar.gz
-
-And verify that bundle after transport:
-
 python -m omphalos release verify --bundle artifacts/releases/<run_id>.tar.gz
+```
 
-## Publishability scanning
+Before distributing outputs outside the environment in which they were generated:
 
-Before distributing outputs outside the environment in which they were generated, it is prudent to scan for common disclosure hazards:
-
+```bash
 python -m omphalos publishability scan --path . --out artifacts/reports/publishability.json
+```
 
-This scan is a safeguard, not a guarantee. Treat it as a gate that reduces avoidable error, not as an absolution.
+Treat the scan as a pre-flight gate. A clean report reduces common failure modes; it does not constitute a blanket safety determination.
 
-## Configuration, contracts, and explicitness
+## Configuration and declared rules
 
-Run configurations live in config/runs/. Schemas and rule packs live in contracts/.
+Runs are configured in `config/runs/`. Schemas and rule packs live in `contracts/`.
 
-The project’s bias is explicitness. If an output matters, its shape should be declared. If a rule matters, it should be written down. If a check fails, the failure should be inspectable, not mystical.
+The governing posture is explicitness. Shapes worth consuming should be declared. Rules worth relying on should be written down. Failures should be inspectable.
 
-## Scope and limits
+## Appendix A: run directory layout
 
-omphalOS does not adjudicate policy, assign legal meaning, or substitute for domain judgment. It records what occurred, checks what can be checked, and packages work products so they remain intelligible under review. It is therefore most useful to practitioners who already understand what they are trying to decide, and who need their work to withstand retelling.
+A typical run directory includes:
+
+- `run_manifest.json`  
+  Inventory of outputs with integrity fingerprints.
+
+- `exports/`  
+  Reader-facing products (tables, narrative, packet-style records).
+
+- `reports/`  
+  Structured checks and summaries (quality, determinism comparison, publishability scan, dependency inventory).
+
+- `lineage/`  
+  Append-only event record of execution.
+
+- `warehouse/`  
+  Local SQLite artifact used by the reference pipeline.
+
+## Appendix B: operating expectations
+
+omphalOS assumed two expectations throughout itself:
+
+Firstly, the run directory is treated as an immutable package once the run completes. Editing outputs “for presentation” after completion is a change in evidence. If edits are required, the disciplined move is to rerun under a revised configuration and allow the record to reflect the revision.
+
+Secondly, comparisons are only as meaningful as the boundaries you enforce. If the run’s inputs depend on ambient state—untracked files, implicit credentials, external services whose responses are not recorded—then replay will converge on approximation rather than identity. The system will still produce a record; it cannot supply missing constraints.
 
 ## Documentation
 
-The most direct entry points are:
+Start with:
 
-- docs/overview.md
-- docs/architecture.md
-- docs/artifacts.md
-- docs/cli.md
-- docs/open_source_readiness.md
-- docs/threat_model.md
+- `docs/overview.md`
+- `docs/architecture.md`
+- `docs/artifacts.md`
+- `docs/cli.md`
+- `docs/open_source_readiness.md`
+- `docs/threat_model.md`
 
 ## License
 
-Apache-2.0. See LICENSE and NOTICE. Citation metadata is provided in CITATION.cff.
+Apache-2.0. See `LICENSE` and `NOTICE`. Citation metadata is in `CITATION.cff`.
