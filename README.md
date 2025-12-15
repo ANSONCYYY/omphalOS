@@ -34,7 +34,7 @@ If a package cannot answer these questions, it is incomplete work.
 
 ## Minimal use
 
-Verify the included sample run:
+One may verify the included sample run:
 
 ```bash
 python -m omphalos verify --run-dir examples/sample_run
@@ -73,7 +73,7 @@ Before distributing outputs outside the environment in which they were generated
 python -m omphalos publishability scan --path . --out artifacts/reports/publishability.json
 ```
 
-Treat the scan as a pre-flight gate. A clean report reduces common failure modes; it does not constitute a blanket safety determination.
+The scan ought to be treated as a pre-flight gate, whereupon a clean report reduces common failure modes; it does not constitute a blanket safety determination.
 
 ## Configuration and declared rules
 
@@ -110,7 +110,7 @@ Secondly, comparisons are only as meaningful as the boundaries you enforce. If t
 
 ## Documentation
 
-Start with:
+I recommend that you start with:
 
 - `docs/overview.md`
 - `docs/architecture.md`
