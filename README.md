@@ -4,7 +4,7 @@ omphalOS exists for a simple reason: _Analytic conclusions outlive the circumsta
 
 In U.S.-governmental environments vis-à-vis trade, technology, export controls, and enforcement — the setting(s) for which this system was first built in May 2024, then modernized for open release in December 2025 — an output that may inform action is expected to remain (i) legible under review, (ii) traceable to its provenance, and (iii) transmissible only under deliberate restraint.
 
-The purpose here is practical: **to make that posture routine.**
+The purpose, here, is practical: **to make that posture routine.**
 
 This public release is a sanitized reference implementation, and all example data is synthetic.
 
@@ -14,7 +14,7 @@ A run is treated as an evidentiary package: it yields deliverables for a reader 
 
 The claims, then, are intentionally narrow:
 
-1. Integrity: a completed run directory can be checked against its manifest. If the fingerprints do not match, the package has changed.
+1. Integrity: a completed run directory can be checked against its manifest. (To wit, if the fingerprints do not match, the package has changed.)
 2. Comparability: two runs can be compared at the level of declared outputs, so disagreement can be located rather than narrated.
 3. Controlled distribution: a publishability scan surfaces common disclosure hazards before a package leaves its originating context.
 
@@ -121,4 +121,4 @@ I recommend that you start with:
 
 ## License
 
-Apache-2.0. See `LICENSE` and `NOTICE`. Citation metadata is in `CITATION.cff`.
+Apache-2.0; see `LICENSE` and `NOTICE`; citation metadata is in `CITATION.cff`.
