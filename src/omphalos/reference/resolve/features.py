@@ -6,7 +6,6 @@ from typing import List, Set
 
 _PUNCT_RE = re.compile(r"[^A-Z0-9\s-]")
 
-# Corporate designators and generic entity suffixes.
 _STOPWORDS: Set[str] = {
     "INC",
     "LLC",

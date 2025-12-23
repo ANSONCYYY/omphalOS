@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 import typer
@@ -134,3 +135,15 @@ def app_entry() -> None:
         app()
     except WorkbenchError as e:
         _die(str(e))
+
+
+@app.command()
+def serve(
+    host: str = typer.Option("127.0.0.1", "--host"),
+    port: int = typer.Option(8000, "--port"),
+    runs_root: Path = typer.Option(Path("artifacts/runs"), "--runs-root", exists=False, file_okay=False),
+) -> None:
+    os.environ["OMPHALOS_RUNS_ROOT"] = str(runs_root)
+    import uvicorn
+    uvicorn.run("omphalos.api.server:app", host=host, port=port, reload=False, log_level="info")
+

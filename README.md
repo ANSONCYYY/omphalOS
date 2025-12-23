@@ -1,106 +1,143 @@
 # omphalOS
 
-omphalOS is a deterministic analysis workbench for trade and technology-transfer oversight. It builds a run directory that contains: inputs, normalized datasets, a warehouse, scored entities, review tables, exports, and a machine-checkable integrity index.
+omphalOS exists for a simple reason: _Analytic conclusions outlive the circumstances that produced them._
 
-The repository ships a reference implementation with synthetic data. It is structured to support the same workflow across workstation runs, scheduled runs, and deployed runs, while preserving a stable artifact contract.
+In U.S.-governmental environments vis-à-vis trade, technology, export controls, and enforcement — the setting(s) for which this system was first built in May 2024, then modernized for open release in December 2025 — an output that may inform action is expected to remain (i) legible under review, (ii) traceable to its provenance, and (iii) transmissible only under deliberate restraint.
 
-## Scope
+The purpose, here, is practical: **to make that posture routine.**
 
-omphalOS covers four tasks:
+This public release is a sanitized reference implementation, and all example data is synthetic.
 
-1. Ingest: load a trade feed and a registry (lists, watchlists, or reference entities).
-2. Normalize: canonicalize fields, enforce schemas, and derive deterministic features.
-3. Score and assemble: match trade records to registry entities, compute entity exposure summaries, and write review-ready tables.
-4. Package: fingerprint all outputs, emit a run manifest, and (optionally) assemble a release bundle for distribution.
+## What the system asserts
 
-## Run directory contract
+A run is treated as an evidentiary package: it yields deliverables for a reader and, inseparably, a record adequate to explain what was done, reproduce it when feasible, and detect post-hoc alteration without argument.
 
-A run is an immutable directory rooted at:
+The claims, then, are intentionally narrow:
 
-artifacts/runs/<run_id>/
+1. Integrity: a completed run directory can be checked against its manifest. (To wit, if the fingerprints do not match, the package has changed.)
+2. Comparability: two runs can be compared at the level of declared outputs, so disagreement can be located rather than narrated.
+3. Controlled distribution: a publishability scan surfaces common disclosure hazards before a package leaves its originating context.
 
-The directory is treated as write-once: outputs are written under stable paths, then indexed and fingerprinted. The manifest contains:
+No stronger guarantee is implied. Correctness remains a matter of method, inputs, and judgment.
 
-- metadata: tool version, run_id, timestamps, environment identifiers
-- declared artifacts: relative paths, sizes, sha256
-- merkle root of the artifact set
-- structured reports: dataset validation, matching statistics, scoring summaries
-- release metadata when a bundle is assembled
+## What a reader can expect from the record
 
-This contract is the unit of comparison and verification.
+A run produces a directory intended to travel as a unit. The directory is structured so a reviewer can answer, from the artifacts alone, the questions that reliably matter once work leaves its originating workspace:
 
-## Data model
+- What inputs were admitted, and what boundaries were enforced?
+- What rules governed transformations, and where are those rules stated?
+- Which outputs are intended for consumption, which are intermediate, and which require human review?
+- What may be shared, with whom, and with what risk of inadvertent disclosure?
+- When two executions disagree, is the disagreement substantive or procedural?
 
-The reference warehouse is a SQLite database written to:
+If a package cannot answer these questions, it is incomplete work.
 
-artifacts/runs/<run_id>/warehouse/warehouse.sqlite
+## Minimal use
 
-Base tables:
+One may verify the included sample run:
 
-- trade_feed: one row per shipment
-- registry: one row per entity
-- entity_matches: one row per shipment-entity candidate match
-- entity_scores: one row per entity summary
+```bash
+python -m omphalos verify --run-dir examples/sample_run
+```
 
-The maximal pipeline extends trade_feed with exporter_country and importer_country while preserving the legacy country field.
+Execute the synthetic reference pipeline:
 
-## Warehouse and SQL surfaces
+```bash
+python -m omphalos run --config config/runs/example_run.yaml
+```
 
-The repository contains two SQL surfaces:
+Verify a generated run directory:
 
-1. Warehouse transforms: a dbt project under warehouse/ that defines staging, intermediate, and mart models. It is written to run against SQLite, DuckDB, or Postgres using profiles shipped under warehouse/profiles/.
-2. Analyst catalog: a curated query library under sql/ organized by briefing, review, audit, and investigations. Catalog execution records the query text, parameters, and output fingerprints into the run directory.
+```bash
+python -m omphalos verify --run-dir artifacts/runs/<run_id>
+```
 
-Both surfaces are designed to be executable and to emit artifacts that the manifest can index.
+Compare two runs for payload-level equivalence:
 
-## Orchestration and deployment
+```bash
+python -m omphalos certify --run-a artifacts/runs/<runA> --run-b artifacts/runs/<runB>
+```
 
-The repository includes:
+## Distribution
 
-- scripts/ as the canonical operator interface (run, verify, certify, backfill, release-build, release-verify)
-- orchestration/airflow/ with DAGs that call the same runner interfaces
-- infra/k8s with base manifests and overlays for scheduled jobs
-- infra/terraform with modules and cloud examples for storage, identity, and logging
-- spark/scala as an optional scaling path for ingestion and coarse aggregations
+When a run must be transmitted as a single object:
 
-## Policy
+```bash
+python -m omphalos release build --run-dir artifacts/runs/<run_id> --out artifacts/releases/<run_id>.tar.gz
+python -m omphalos release verify --bundle artifacts/releases/<run_id>.tar.gz
+```
 
-policies/opa contains Rego policies that can evaluate:
+Before distributing outputs outside the environment in which they were generated:
 
-- run manifests and release bundles
-- publishability constraints
-- infrastructure constraints for Terraform plans and Kubernetes manifests
+```bash
+python -m omphalos publishability scan --path . --out artifacts/reports/publishability.json
+```
 
-Policy evaluation produces structured reports under the run directory.
+The scan ought to be treated as a pre-flight gate, whereupon a clean report reduces common failure modes; it does not constitute a blanket safety determination.
 
-## User interface
+## Configuration and declared rules
 
-ui/ provides a local run browser that renders:
+Runs are configured in `config/runs/`. Schemas and rule packs live in `contracts/`.
 
-- run manifests
-- reports and diffs between runs
-- review tables and export artifacts
+The governing posture is explicitness. Shapes worth consuming should be declared. Rules worth relying on should be written down. Failures should be inspectable.
 
-The UI reads from a small API server under src/omphalos/api.
+## Appendix A: run directory layout
 
-## Independent verifiers
+A typical run directory includes:
 
-agents/ contains small verifiers that can validate a run directory without importing the Python package:
+- `run_manifest.json`  
+  Inventory of outputs with integrity fingerprints.
 
-- agents/go/omphalos-verify
-- agents/rust/omphalos-verify
+- `exports/`  
+  Reader-facing products (tables, narrative, packet-style records).
 
-## Command line
+- `reports/`  
+  Structured checks and summaries (quality, determinism comparison, publishability scan, dependency inventory).
 
-The CLI exposes:
+- `lineage/`  
+  Append-only event record of execution.
 
-- omphalos run: reference pipeline on synthetic data
-- omphalos verify: recompute fingerprints and validate the manifest
-- omphalos compare: compare declared artifacts between runs
-- omphalos release: build and verify release bundles
+- `warehouse/`  
+  Local SQLite artifact used by the reference pipeline.
 
-Maximal pipelines and additional surfaces are available under src/omphalos/maximal and are invoked through explicit commands and job specs.
+## Appendix B: operating expectations
 
-## Files kept for provenance
+omphalOS assumed two expectations throughout itself:
 
-Original repository files are preserved. Where a file is materially upgraded, the prior content is copied into .legacy_snapshots/ with the same relative path before modification.
+Firstly, the run directory is treated as an immutable package once the run completes. Editing outputs “for presentation” after completion is a change in evidence. If edits are required, the disciplined move is to rerun under a revised configuration and allow the record to reflect the revision.
+
+Secondly, comparisons are only as meaningful as the boundaries you enforce. If the run’s inputs depend on ambient state—untracked files, implicit credentials, external services whose responses are not recorded—then replay will converge on approximation rather than identity. The system will still produce a record; it cannot supply missing constraints.
+
+## Documentation
+
+I recommend that you start with:
+
+- `docs/overview.md`
+- `docs/architecture.md`
+- `docs/artifacts.md`
+- `docs/cli.md`
+- `docs/open_source_readiness.md`
+- `docs/threat_model.md`
+
+## License
+
+Apache-2.0; see `LICENSE` and `NOTICE`; citation metadata is in `CITATION.cff`.
+
+
+## Local run
+
+```bash
+omphalos run --config config/runs/example_run.yaml
+```
+
+This produces a run directory under `artifacts/runs/<run_id>/` with `run_manifest.json` binding inputs, artifacts, and exports by hash.
+
+## Local review UI
+
+```bash
+omphalos serve --runs-root artifacts/runs --host 127.0.0.1 --port 8000
+```
+
+Open `http://127.0.0.1:8000/`.
+
+The UI is a client of the API exposed at `/api/*` and reads all data from the run directories on disk.

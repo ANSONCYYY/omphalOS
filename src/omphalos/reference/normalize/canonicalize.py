@@ -22,11 +22,15 @@ def canonicalize_registry(rows: List[dict[str, Any]]) -> List[dict[str, Any]]:
 def canonicalize_trade_feed(rows: List[dict[str, Any]]) -> List[dict[str, Any]]:
     out: List[dict[str, Any]] = []
     for r in rows:
+        exporter_country = str(r.get("exporter_country", r.get("country", ""))).upper()
+        importer_country = str(r.get("importer_country", r.get("country", exporter_country))).upper()
         out.append({
             "shipment_id": str(r["shipment_id"]),
             "exporter_name": _norm_text(str(r["exporter_name"])),
             "importer_name": _norm_text(str(r["importer_name"])),
-            "country": str(r["country"]).upper(),
+            "exporter_country": exporter_country,
+            "importer_country": importer_country,
+            "country": exporter_country,
             "hs_code": str(r["hs_code"]),
             "value_usd": float(r["value_usd"]),
             "ship_date": str(r["ship_date"]),

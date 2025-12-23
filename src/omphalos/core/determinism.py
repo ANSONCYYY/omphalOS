@@ -55,7 +55,6 @@ def verify_run_dir(run_dir: Path) -> Dict[str, Any]:
     _check_set(payload_spec, "payload")
     _check_set(control_spec, "control")
 
-    # Payload root hash verification
     try:
         fps = _payload_fingerprints_from_disk(run_dir, payload_spec)
         computed_payload_root = merkle_root(fps)
@@ -66,7 +65,6 @@ def verify_run_dir(run_dir: Path) -> Dict[str, Any]:
     if computed_payload_root != manifest["artifacts"]["root_hash"]:
         mismatches.append("payload root_hash mismatch")
 
-    # Unexpected files detection (manifest is structurally required and excluded from the payload root hash)
     expected_all = set(payload_spec.keys()) | set(control_spec.keys()) | {"run_manifest.json"}
     actual_all = set()
     for p in list_files(run_dir):
@@ -108,7 +106,6 @@ def certify_equivalence(run_a: Path, run_b: Path) -> Dict[str, Any]:
 
     payload_diffs: List[str] = []
     if status == "FAIL":
-        # Fast diagnostic: list payload paths that differ by hash.
         all_payload_paths = sorted(set(a_payload.keys()) | set(b_payload.keys()))
         for rel in all_payload_paths:
             a_sha = a_payload.get(rel, {}).get("sha256")

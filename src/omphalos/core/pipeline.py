@@ -19,8 +19,6 @@ from ..reference.pipeline import run_reference_pipeline
 
 _MANIFEST_RELPATH = "run_manifest.json"
 
-# Files that carry environment details or depend on the payload root hash. They are recorded
-# in the manifest but excluded from the payload root hash.
 _LOG_RELPATH = "logs/run.jsonl"
 _QUALITY_RELPATH = "reports/quality_report.json"
 _DETERMINISM_RELPATH = "reports/determinism_report.json"
@@ -61,7 +59,6 @@ def run_workbench(cfg: RunConfig, config_path: Optional[str] = None) -> Path:
     lineage_path = run_dir / "lineage" / "lineage.jsonl"
     write_lineage(results["lineage_events"], lineage_path)
 
-    # Compute the payload root hash. Control artifacts and the manifest itself are excluded.
     payload_exclude = [_MANIFEST_RELPATH, "logs/"] + list(_CONTROL_RELPATHS)
     payload_idx = store.index(exclude=payload_exclude)
     payload_root_hash = payload_idx.root_hash

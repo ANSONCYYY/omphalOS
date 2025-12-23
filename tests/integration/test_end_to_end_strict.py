@@ -19,6 +19,5 @@ def test_end_to_end_strict_pack(tmp_path: Path, repo_root: Path) -> None:
     rep = verify_run_dir(run_dir)
     assert rep["status"] == "PASS", rep
 
-    # The strict pack should have produced a PASS quality report.
     q = json.loads((run_dir / "reports" / "quality_report.json").read_text(encoding="utf-8"))
     assert q["status"] == "PASS", q

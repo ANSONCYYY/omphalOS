@@ -42,7 +42,6 @@ def load_pack(name: str) -> RulePack:
     except Exception as e:
         raise ConfigError(f"invalid rule pack: {name}") from e
 
-    # Resolve relative paths from repo root.
     root = CONTRACTS_DIR.parent
     q = _dedupe_paths([(root / p).resolve() for p in quality_rules])
     pub = _dedupe_paths([(root / p).resolve() for p in publishability_rules])

@@ -32,9 +32,6 @@ def resolve_entities(
         second_s = scored[1][0] if len(scored) > 1 else 0.0
         explanation = explain_match(exp, best_name, best_s, exp_tokens, best_tokens)
 
-        # Deterministic decision policy:
-        # - accept confident matches
-        # - route low confidence or low margin (ambiguous) cases to review
         status = "REVIEW"
         if best_s >= 0.80 and (best_s - second_s) >= 0.10:
             status = "MATCH"

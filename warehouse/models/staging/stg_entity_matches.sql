@@ -1,10 +1,7 @@
-WITH src AS (
-  SELECT * FROM {{ source('warehouse', 'entity_matches') }}
-)
-SELECT
+select
   shipment_id,
   entity_id,
-  CAST(score AS DOUBLE) AS score,
+  cast(score as double) as score,
   status,
   explanation
-FROM src;
+from {{ source('omphalos', 'entity_matches') }}

@@ -24,7 +24,6 @@ class DemoTradeFeedConnector:
     def read(self, *, seed: int) -> List[dict[str, Any]]:
         rng = random.Random(seed)
 
-        # If no pool is provided, fall back to a small fixed set.
         exporters = list(self.exporter_pool) if self.exporter_pool else [
             "ASTER BOREAL",
             "COBALT DORIAN",
@@ -39,8 +38,6 @@ class DemoTradeFeedConnector:
         ambiguous = [" ".join(a.split()).upper() for a in ambiguous]
         ambiguous = sorted(set(ambiguous))
 
-        # Ensure ambiguous exporters are only emitted through the dedicated
-        # ambiguous slice (so review_fraction remains bounded and stable).
         non_ambiguous_exporters = [e for e in exporters if e not in ambiguous]
         if non_ambiguous_exporters:
             exporters = non_ambiguous_exporters
@@ -53,7 +50,6 @@ class DemoTradeFeedConnector:
         suffixes = ["", " LLC", " INC", " CO", " LTD", " GROUP"]
 
         def vary_name(name: str) -> str:
-            # Token-preserving variations (case handled later by canonicalization).
             out = name
             if rng.random() < 0.35:
                 out = out.replace(" ", "-")
@@ -69,8 +65,6 @@ class DemoTradeFeedConnector:
 
         rows: List[dict[str, Any]] = []
 
-        # Choose exactly k rows that will be ambiguous, to keep review_fraction
-        # stable even for small record counts.
         ambiguous_idx = set()
         if ambiguous:
             k = int(round(float(self.ambiguous_fraction) * float(self.records)))
@@ -81,7 +75,6 @@ class DemoTradeFeedConnector:
         for i in range(self.records):
             sid = f"S{i+1:06d}"
 
-            # A small controlled slice of ambiguous exporter names exercises the review queue.
             use_ambiguous = bool(ambiguous) and (i in ambiguous_idx)
             if use_ambiguous:
                 exporter = rng.choice(ambiguous)
@@ -99,6 +92,8 @@ class DemoTradeFeedConnector:
                     "shipment_id": sid,
                     "exporter_name": vary_name(exporter),
                     "importer_name": importer,
+                    "exporter_country": country,
+                    "importer_country": rng.choice(countries),
                     "country": country,
                     "hs_code": hs,
                     "value_usd": float(value),

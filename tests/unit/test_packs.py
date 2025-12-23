@@ -17,7 +17,6 @@ def test_load_pack_strict_is_stricter() -> None:
     strict = load_pack("strict")
     assert len(strict.quality_rules) >= len(base.quality_rules)
     assert len(strict.publishability_rules) >= len(base.publishability_rules)
-    # Ensure the strict pack includes the strict rule files by name.
     q_names = {p.name for p in strict.quality_rules}
     pub_names = {p.name for p in strict.publishability_rules}
     assert "strict_quality_rules.yaml" in q_names

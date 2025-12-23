@@ -12,7 +12,6 @@ def compute_chokepoint_scores(
     matches: List[dict[str, Any]],
     registry_rows: List[dict[str, Any]],
 ) -> List[dict[str, Any]]:
-    # map shipment -> entity
     ship_to_entity = {m["shipment_id"]: m["entity_id"] for m in matches}
     entity_meta = {r["entity_id"]: (r["entity_name"], r["country"]) for r in registry_rows}
 

@@ -14,17 +14,14 @@ def test_quality_engine_schema_and_csv_checks(tmp_path: Path) -> None:
     (run_dir / "exports" / "briefing_tables").mkdir(parents=True)
     (run_dir / "reports").mkdir(parents=True)
 
-    # JSON payload to validate
     packet = {"schema_version": "1.0", "run_id": "run-x", "packet_id": "p", "created_at": "2000-01-01T00:00:00Z",
               "claim": "c", "entity": {"entity_id": "e", "entity_name": "n", "country": "X", "chokepoint_score": 0.1,
               "shipment_count": 1, "total_value_usd": 1.0}, "evidence": [], "lineage": [], "review": {"status": "CLEAR", "reason": "r"},
               "hashes": {"packet": "0" * 64}}
     (run_dir / "exports" / "packets" / "packet.json").write_text(json.dumps(packet), encoding="utf-8")
 
-    # CSV with header + 1 data row
     (run_dir / "exports" / "briefing_tables" / "table.csv").write_text("a,b\n1,2\n", encoding="utf-8")
 
-    # Schema written to an absolute path so the evaluator can load it directly.
     schema_path = tmp_path / "schema.json"
     schema_path.write_text(
         json.dumps({"type": "object", "required": ["schema_version", "run_id"], "properties": {"schema_version": {"type": "string"}, "run_id": {"type": "string"}}}),

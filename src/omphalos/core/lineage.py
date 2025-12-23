@@ -34,8 +34,6 @@ class LineageEvent:
 
     @staticmethod
     def create(run_id: str, kind: str, inputs: Sequence[str], outputs: Sequence[str], details: Dict[str, Any], clock_seed: str) -> "LineageEvent":
-        # Deterministic event identity: derived from semantic content rather than runtime.
-        # This keeps lineage artifacts inside the payload hash without sacrificing stability.
         payload = {
             "schema_version": "1.0",
             "run_id": run_id,

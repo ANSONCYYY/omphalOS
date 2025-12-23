@@ -39,7 +39,6 @@ class DemoRegistryConnector:
             "SG",
         ]
 
-        # Synthetic but stable name vocabulary.
         words = [
             "Aster",
             "Boreal",
@@ -60,10 +59,6 @@ class DemoRegistryConnector:
         ]
 
         def make_base_names(target: int) -> List[str]:
-            # Make unique two-token names, deterministically.
-            # Uniqueness is defined on the *token set* to avoid swapped-token
-            # collisions (e.g., "Aster Boreal" vs "Boreal Aster") which would
-            # otherwise yield ambiguous perfect matches.
             seen_key: set[str] = set()
             out: List[str] = []
             while len(out) < target:
@@ -75,8 +70,6 @@ class DemoRegistryConnector:
             out.sort()
             return out
 
-        # A stable core set: enough variety to make products interesting, but
-        # with controlled ambiguity via suffix variants for a small subset.
         core_base = make_base_names(max(12, min(32, self.entities)))
         ambiguous_base = core_base[:3]  # bounded ambiguity (exercised by trade feed)
 
@@ -89,8 +82,6 @@ class DemoRegistryConnector:
         eid_num = 1
         for base in core_base:
             if base in ambiguous_base:
-                # Two variants share the same core tokens once suffixes are stripped
-                # by the resolver, yielding a controlled ambiguity pattern.
                 add_entity(eid_num, f"{base} LLC")
                 eid_num += 1
                 add_entity(eid_num, f"{base} INC")
@@ -102,8 +93,6 @@ class DemoRegistryConnector:
             if len(rows) >= self.entities:
                 break
 
-        # Fill remaining quota with additional single-variant entities, while
-        # continuing to avoid swapped-token collisions.
         used_keys = {" ".join(sorted(b.split())) for b in core_base}
         while len(rows) < self.entities:
             base = f"{rng.choice(words)} {rng.choice(words)}"

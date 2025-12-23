@@ -15,12 +15,10 @@ from .time import deterministic_now_iso
 
 def _load_schema_ref(schema_ref: str) -> Dict[str, Any]:
     """Load a schema by filename (from contracts/schemas) or by repo-relative path."""
-    # Common case: schema filename without a path.
     if "/" not in schema_ref and "\\" not in schema_ref:
         return load_json_schema(schema_ref)
     p = Path(schema_ref)
     if not p.is_absolute():
-        # Treat as repo-relative path.
         p = Path(__file__).resolve().parents[3] / p
     return json.loads(p.read_text(encoding="utf-8"))
 

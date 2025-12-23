@@ -27,7 +27,6 @@ def scan_path(path: Path, *, rule_paths: List[Path] | None = None, max_bytes: in
         rule_paths = [_DEFAULT_RULES_PATH]
     rules = _load_rules(rule_paths)
     findings: List[Dict[str, Any]] = []
-    # Use a stable identifier for the scanned target.
     target = path.name
 
     if path.is_file():
