@@ -1,0 +1,8 @@
+services:
+  omphalos:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    command: ["omphalos", "run", "--config", "config/runs/example_run.yaml"]
+    volumes:
+      - ./artifacts:/app/artifacts

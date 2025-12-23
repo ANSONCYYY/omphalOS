@@ -1,0 +1,10 @@
+{
+  "files": [
+    {
+      "path": "run_manifest.json"
+    },
+    {
+      "path": "reports/quality_report.json"
+    }
+  ]
+}
