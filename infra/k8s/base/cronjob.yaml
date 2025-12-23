@@ -1,41 +1,34 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: omphalos-nightly-example
+  name: omphalos-nightly
   namespace: omphalos
 spec:
   schedule: "0 3 * * *"
   concurrencyPolicy: Forbid
-  successfulJobsHistoryLimit: 2
-  failedJobsHistoryLimit: 5
   jobTemplate:
     spec:
+      backoffLimit: 0
       template:
         spec:
-          serviceAccountName: omphalos-runner
+          serviceAccountName: omphalos
           restartPolicy: Never
           containers:
             - name: omphalos
               image: omphalos:latest
               imagePullPolicy: IfNotPresent
-              env:
-                - name: OMPHALOS_OUTPUT_ROOT
-                  value: "/var/omphalos/runs"
-                - name: RUN_CONFIG_PATH
-                  valueFrom:
-                    configMapKeyRef:
-                      name: omphalos-config
-                      key: RUN_CONFIG_PATH
-              command: ["/bin/bash","-lc"]
+              command: ["sh", "-lc"]
               args:
-                - |
-                  set -euo pipefail
-                  cd /app
-                  python -m omphalos run --config "${RUN_CONFIG_PATH}" --output-root "${OMPHALOS_OUTPUT_ROOT}"
+                - "mkdir -p /var/omphalos/runs && RUN_DIR=$(omphalos run --config /etc/omphalos/example_run.yaml) && omphalos verify --run-dir ${RUN_DIR}"
               volumeMounts:
-                - name: artifacts
-                  mountPath: /var/omphalos
+                - name: cfg
+                  mountPath: /etc/omphalos
+                - name: runs
+                  mountPath: /var/omphalos/runs
           volumes:
-            - name: artifacts
+            - name: cfg
+              configMap:
+                name: omphalos-config
+            - name: runs
               persistentVolumeClaim:
-                claimName: omphalos-artifacts
+                claimName: omphalos-runs

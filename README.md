@@ -1,9 +1,20 @@
-# omphalOS
+omphalOS
 
-omphalOS exists for a simple reason: _Analytic conclusions outlive the circumstances that produced them._
+Deterministic workbench that ingests a trade feed and an entity registry, resolves entity matches, produces scored outputs, and packages artifacts for verification and release.
 
-In U.S.-governmental environments vis-à-vis trade, technology, export controls, and enforcement — the setting(s) for which this system was first built in May 2024, then modernized for open release in December 2025 — an output that may inform action is expected to remain (i) legible under review, (ii) traceable to its provenance, and (iii) transmissible only under deliberate restraint.
+Directory map
+- src/omphalos: Python implementation (CLI, pipeline, rules, artifacts, verification)
+- config: run configurations
+- warehouse: SQLite schema plus dbt project for modeling
+- sql: curated SQL catalog and playbooks targeting a run warehouse
+- orchestration: Airflow DAGs and scheduler surfaces
+- spark: PySpark and Scala Spark transforms that mirror warehouse rollups
+- infra: Terraform and Kubernetes manifests
+- policies: OPA policies for publishability and quality gates
+- agents: Go and Rust verifiers for run bundles
+- ui: run_manifest inspector (React)
 
+<<<<<<< Updated upstream
 The purpose, here, is practical: **to make that posture routine.**
 
 This public release is a sanitized reference implementation, and all example data is synthetic.
@@ -154,3 +165,10 @@ I recommend that you start with:
 ## License
 
 Apache-2.0; see `LICENSE` and `NOTICE`; citation metadata is in `CITATION.cff`.
+=======
+Common commands
+- omphalos run --config config/runs/example_run.yaml
+- omphalos verify --run-dir <run_dir>
+- omphalos release build --run-dir <run_dir> --out <bundle.tar.gz>
+- omphalos sql run --run-dir <run_dir> --manifest sql/manifests/briefing_pack.yaml
+>>>>>>> Stashed changes

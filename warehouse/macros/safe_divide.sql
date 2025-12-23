@@ -5,4 +5,3 @@ case
   else ({{ numerator }} * 1.0) / {{ denominator }}
 end
 {%- endmacro %}
-

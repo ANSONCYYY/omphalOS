@@ -4,7 +4,8 @@ namespace: omphalos
 resources:
   - namespace.yaml
   - serviceaccount.yaml
-  - rbac.yaml
-  - pvc.yaml
+  - role.yaml
+  - rolebinding.yaml
   - configmap.yaml
+  - pvc.yaml
   - cronjob.yaml

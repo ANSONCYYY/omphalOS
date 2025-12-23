@@ -2,11 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../../base
-patches:
-  - target:
-      kind: PersistentVolumeClaim
-      name: omphalos-artifacts
-    patch: |-
-      - op: replace
-        path: /spec/resources/requests/storage
-        value: 1Gi
+images:
+  - name: omphalos
+    newName: omphalos
+    newTag: latest

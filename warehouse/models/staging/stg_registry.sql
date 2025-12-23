@@ -1,6 +1,5 @@
--- Staging: registry
 select
   entity_id,
-  entity_name,
-  country
+  upper(trim(entity_name)) as entity_name,
+  upper(trim(country)) as country
 from {{ source('raw', 'registry') }}

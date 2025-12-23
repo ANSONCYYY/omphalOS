@@ -1,28 +1,8 @@
-# Terraform (deployment surface)
+Terraform infrastructure
 
-This folder turns the previous placeholders into a real, minimal Terraform surface.
+This tree provisions a minimal cloud footprint for storing runs, publishing release bundles, and operating scheduled execution.
 
-The repository does **not** assume a single cloud. Instead, it ships provider-specific
-modules and examples for:
-
-- AWS: S3 artifact bucket
-- GCP: GCS artifact bucket
-- Azure: Blob container + storage account
-
-These examples are intentionally small. Real deployments will usually add:
-
-- identities / IAM policies for the omphalOS runner
-- encryption keys (KMS/CMEK) if required by policy
-- object lifecycle/retention policies
-- Kubernetes cluster provisioning (out of scope here)
-
-## Use
-
-Pick a cloud under `infra/terraform/examples/` and run:
-
-```bash
-terraform init
-terraform plan
-terraform apply
-```
-
+Layout
+- main.tf, variables.tf, outputs.tf: root module
+- modules: composable components
+- env: environment overlays that pin variables for dev and prod

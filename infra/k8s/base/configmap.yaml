@@ -4,4 +4,14 @@ metadata:
   name: omphalos-config
   namespace: omphalos
 data:
-  RUN_CONFIG_PATH: "config/runs/example_run.yaml"
+  example_run.yaml: |
+    run:
+      output_root: /var/omphalos/runs
+    rules:
+      pack: baseline
+    ingest:
+      trade_feed: demo_trade_feed
+      registry: demo_registry
+    products:
+      csv_exports: true
+      evidence_packets: true

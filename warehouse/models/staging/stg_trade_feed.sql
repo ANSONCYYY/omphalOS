@@ -1,13 +1,14 @@
--- Staging: trade_feed
--- The reference pipeline writes a table named `trade_feed` into the run warehouse.
--- This model exists so downstream marts never select directly from a raw table.
-
+with base as (
+  select * from {{ source('raw', 'trade_feed') }}
+)
 select
   shipment_id,
-  exporter_name,
-  importer_name,
-  country,
+  upper(trim(exporter_name)) as exporter_name,
+  upper(trim(importer_name)) as importer_name,
+  exporter_country,
+  importer_country,
+  coalesce(exporter_country, country) as country,
   hs_code,
-  cast(value_usd as double) as value_usd,
+  cast(value_usd as {{ dbt.type_numeric() }}) as value_usd,
   ship_date
-from {{ source('raw', 'trade_feed') }}
+from base

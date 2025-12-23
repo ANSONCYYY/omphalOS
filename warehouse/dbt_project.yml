@@ -1,5 +1,5 @@
 name: omphalos_warehouse
-version: 0.1.0
+version: 0.2.0
 config-version: 2
 
 profile: omphalos_warehouse
@@ -8,11 +8,14 @@ model-paths: ["models"]
 analysis-paths: ["analysis"]
 test-paths: ["tests"]
 macro-paths: ["macros"]
+seed-paths: ["seeds"]
 
 models:
   omphalos_warehouse:
     +materialized: view
     staging:
+      +materialized: view
+    intermediate:
       +materialized: view
     marts:
       +materialized: view

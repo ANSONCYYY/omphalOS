@@ -1,18 +1,22 @@
--- Mart: review queue (shipments where matching is not automatic)
+with rq as (
+  select * from {{ ref('stg_review_queue') }}
+),
+t as (
+  select * from {{ ref('int_trade_hs_slices') }}
+)
 select
-  shipment_id,
-  exporter_name,
-  importer_name,
-  shipment_country,
-  hs_code,
-  value_usd,
-  ship_date,
-  entity_id,
-  entity_name,
-  entity_country,
-  match_score,
-  match_status,
-  explanation
-from {{ ref('mart_shipments_by_entity') }}
-where coalesce(match_status, '') = 'REVIEW'
-order by match_score desc, value_usd desc
+  rq.shipment_id,
+  rq.exporter_name,
+  rq.reason,
+  rq.candidates_json,
+  t.importer_name,
+  t.exporter_country,
+  t.importer_country,
+  t.country,
+  t.hs_code,
+  t.hs2,
+  t.hs4,
+  t.value_usd,
+  t.ship_date
+from rq
+left join t on t.shipment_id = rq.shipment_id

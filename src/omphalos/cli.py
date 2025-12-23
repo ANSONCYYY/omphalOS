@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-from dataclasses import replace
 from pathlib import Path
 
 import typer
@@ -18,12 +17,9 @@ app = typer.Typer(add_completion=False, help="omphalOS CLI (import package: omph
 @app.command()
 def run(
     config: Path = typer.Option(..., "--config", exists=True, dir_okay=False, help="Run config YAML."),
-    output_root: Path | None = typer.Option(None, "--output-root", file_okay=False, help="Override run.output_root from the config (does not change run identity)."),
 ) -> None:
     """Execute a deterministic run and write artifacts."""
     cfg = load_run_config(config)
-    if output_root is not None:
-        cfg = replace(cfg, run=replace(cfg.run, output_root=str(output_root)))
     run_dir = run_workbench(cfg, config_path=str(config))
     typer.echo(str(run_dir))
 
@@ -138,3 +134,16 @@ def app_entry() -> None:
         app()
     except WorkbenchError as e:
         _die(str(e))
+
+
+sql_app = typer.Typer(help="Execute curated SQL against a run warehouse.")
+app.add_typer(sql_app, name="sql")
+
+@sql_app.command("run")
+def sql_run(run_dir: Path = typer.Option(..., help="Run directory"), manifest: Path = typer.Option(..., help="SQL manifest YAML")) -> None:
+    from omphalos.warehouse.sqlrun import run_manifest as _run_manifest
+    _run_manifest(run_dir=run_dir, manifest_path=manifest)
+    typer.echo(str(run_dir))
+
+
+
